@@ -1,0 +1,3 @@
+[submodule "python-mpd-server"]
+	path = python-mpd-server
+	url = git://git.tuxfamily.org/gitroot/pympdserver/python-mpd-server.git
