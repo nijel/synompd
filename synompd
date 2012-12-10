@@ -3,14 +3,14 @@ import synology
 import mpdserver
 import sys
 import os
-from mpdserver.command_base import CommandItems, OptStr
+from mpdserver.command_base import CommandItems, OptStr, MpdPlaylist
 
 class LsInfo(CommandItems): # Since 0.12
     formatArg=[('directory',OptStr)]
     def handle_args(self, directory = ''):
         self.directory = directory
     def items(self):
-        if self.directory == '':
+        if self.directory in ('', '/'):
             target = 'musiclib_music_file'
         else:
             target = self.directory
@@ -24,10 +24,13 @@ class LsInfo(CommandItems): # Since 0.12
             result.append((item_type, item['item_id']))
         return result
 
-
+class SynoPlaylist(MpdPlaylist):
+    def handlePlaylist(self):
+        return []
 
 mpd = mpdserver.MpdServerDaemon(9999)
 mpd.requestHandler.RegisterCommand(LsInfo)
+mpd.requestHandler.Playlist = SynoPlaylist
 
 syno = synology.AudioStation(sys.argv[1], sys.argv[2], 'localhost')
 syno.login()
