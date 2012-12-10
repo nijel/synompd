@@ -65,7 +65,7 @@ class AudioStation(SynoBase):
             start = 0,
             sort = 'album',
             dir = 'ASC',
-            limit = 100,
+            limit = 10000,
         )
 
 if __name__ == '__main__':
