@@ -1,0 +1,47 @@
+#!/usr/bin/python
+import synology
+import mpdserver
+import sys
+import os
+from mpdserver.command_base import CommandItems, OptStr
+
+class LsInfo(CommandItems): # Since 0.12
+    formatArg=[('directory',OptStr)]
+    def handle_args(self, directory = ''):
+        self.directory = directory
+    def items(self):
+        if self.directory == '':
+            target = 'musiclib_music_file'
+        else:
+            target = self.directory
+        server = 'musiclib_music_file'
+        result = []
+        for item in syno.browse_audio(target = target, server = server)['items']:
+            if item['is_container']:
+                item_type = 'directory'
+            else:
+                item_type = 'file'
+            result.append((item_type, item['item_id']))
+        return result
+
+
+
+mpd = mpdserver.MpdServerDaemon(9999)
+mpd.requestHandler.RegisterCommand(LsInfo)
+
+syno = synology.AudioStation(sys.argv[1], sys.argv[2], 'localhost')
+syno.login()
+
+print """Starting a mpd server on port 9999
+Type Ctrl+C to exit
+
+To try it, type in another console
+$ mpc -p 9999 play
+Or launch a MPD client with port 9999
+"""
+if __name__ == "__main__":
+    try:
+        while mpd.wait(1) : pass
+    except KeyboardInterrupt:
+        print "Stopping MPD server"
+        mpd.quit()
