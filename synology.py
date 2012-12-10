@@ -24,10 +24,7 @@ class SynoBase(object):
             self.port,
             path
         )
-        if len(kwargs) > 0:
-            params = urllib.urlencode(kwargs)
-        else:
-            params = None
+        params = urllib.urlencode(kwargs)
         return self.opener.open(url, params)
 
     def request_json(self, path, **kwargs):
@@ -43,7 +40,32 @@ class SynoBase(object):
         return response['success']
 
 class AudioStation(SynoBase):
-    pass
+    def request_as(self, path, **kwargs):
+        return self.request_json('webman/3rdparty/AudioStation/webUI/%s' % path, **kwargs)
+
+    def audio(self):
+        return self.request_as('audio.cgi')
+
+    def browse_audio(self, target = 'musiclib_root', server = 'musiclib_root'):
+        '''
+        Basic method for audio browsing.
+
+        server - musiclib_root for files or musiclib_music_aa for data
+        target - musiclib_music_file for files, musiclib_music_aa for data
+
+        '''
+        return self.request_as(
+            'audio_browse.cgi',
+            action = 'browse',
+            target = target,
+            server = server,
+            category = '',
+            keyword = '',
+            start = 0,
+            sort = 'title',
+            dir = 'ASC',
+            limit = 100,
+        )
 
 if __name__ == '__main__':
     import sys
@@ -51,4 +73,5 @@ if __name__ == '__main__':
     if not syno.login():
         print 'Failed login'
         sys.exit(1)
+    print syno.browse_audio()
 
