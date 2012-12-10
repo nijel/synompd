@@ -57,12 +57,13 @@ class AudioStation(SynoBase):
         return self.request_as(
             'audio_browse.cgi',
             action = 'browse',
+            library = 'shared',
             target = target,
             server = server,
             category = '',
             keyword = '',
             start = 0,
-            sort = 'title',
+            sort = 'album',
             dir = 'ASC',
             limit = 100,
         )
