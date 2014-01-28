@@ -1,7 +1,5 @@
 import urllib
 import urllib2
-import urlparse
-import httplib
 import cookielib
 import json
 
